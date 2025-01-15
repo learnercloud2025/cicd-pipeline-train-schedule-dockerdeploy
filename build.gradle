@@ -12,19 +12,20 @@ node {
 //declare a build task
 task build
 
-//declare a task to create a zip of the app
 task zip(type: Zip) {
-	from ('.') {
-		include "*"
-		include "bin/**"
-		include "data/**"
-		include "node_modules/**"
-		include "public/**"
-		include "routes/**"
-		include "views/**"
-	}
-    	into('dist')
-	baseName "trainSchedule"
+    from('.') {
+        include '*'
+        include 'bin/**'
+        include 'data/**'
+        include 'node_modules/**'
+        include 'public/**'
+        include 'routes/**'
+        include 'views/**'
+    }
+    
+    // In Gradle 8.0+, we use destinationDirectory and fileName properties
+    destinationDirectory = file('dist')
+    archiveFileName = 'trainSchedule.zip'
 }
 
 //declare task dependencies
