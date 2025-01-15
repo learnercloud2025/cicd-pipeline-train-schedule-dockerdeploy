@@ -1,35 +1,46 @@
 plugins {
-  //inlude the nodeJS plugin to execute nodejs and npm tasks
-  id("com.github.node-gradle.node") version "2.2.0"
+    // Update to the latest version of the Node plugin
+    id 'com.github.node-gradle.node' version '7.0.1'
 }
 
 node {
-	download = true
-	version = "9.11.1"
-	npmVersion = "5.6.0"
+    // Update Node and npm versions to more recent LTS versions
+    download = true
+    version = '18.17.1'  // or another LTS version you prefer
+    npmVersion = '9.6.7'
+    // Add this if you're having download issues
+    distBaseUrl = 'https://nodejs.org/dist'
+    npmDistBaseUrl = 'https://registry.npmjs.org/npm/-'
 }
 
-//declare a build task
-task build
-
-//declare a task to create a zip of the app
-task zip(type: Zip) {
-	from ('.') {
-		include "*"
-		include "bin/**"
-		include "data/**"
-		include "node_modules/**"
-		include "public/**"
-		include "routes/**"
-		include "views/**"
-	}
-	destinationDir(file("dist"))
-	baseName "trainSchedule"
+// The rest of your tasks remain the same, but using updated syntax
+tasks.register('zip', Zip) {
+    from('.') {
+        include "*"
+        include "bin/**"
+        include "data/**"
+        include "node_modules/**"
+        include "public/**"
+        include "routes/**"
+        include "views/**"
+    }
+    destinationDirectory.set(file("dist"))
+    archiveBaseName.set("trainSchedule")
 }
 
-//declare task dependencies
-build.dependsOn zip
-zip.dependsOn npm_build
-npm_build.dependsOn npm_test
-npm_test.dependsOn npmInstall
-npm_build.dependsOn npmInstall
+tasks.build {
+    dependsOn tasks.zip
+}
+
+tasks.named('zip') {
+    dependsOn 'npm_run_build'
+}
+
+tasks.named('npm_run_build') {
+    dependsOn 'npm_test'
+    dependsOn 'npmInstall'
+}
+
+tasks.named('npm_test') {
+    dependsOn 'npmInstall'
+}
